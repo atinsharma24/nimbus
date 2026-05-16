@@ -31,10 +31,17 @@ function createClient() {
   return drizzle(pool, { schema });
 }
 
-// Export the singleton client
-// Trade-off: module-level singleton works well for Next.js server-side code,
-// but will need a guard for hot-reload in development (Next.js handles this via globalThis)
-export const db = createClient();
+// PATTERN: Singleton via globalThis — survives Next.js hot-reload cycles in development.
+// [INTERVIEW ANCHOR] globalThis is the universal global object across Node.js environments.
+// Storing the DB client here prevents connection pool exhaustion (max_connections = 100)
+// during webpack HMR. In production there are no hot reloads, so this guard is a no-op.
+const globalForDb = globalThis as unknown as { _nimbusDb?: ReturnType<typeof createClient> };
+
+export const db = globalForDb._nimbusDb ?? createClient();
+
+if (process.env['NODE_ENV'] !== 'production') {
+  globalForDb._nimbusDb = db;
+}
 
 // Re-export schema for convenience — callers import from '@nimbus/db' only
 export * from './schema';

@@ -27,7 +27,7 @@ services:
       # Named volume — data persists across container restarts
       - nimbus_pg_data:/var/lib/postgresql/data
       # Init script — runs once on first container start
-      - ./infra/init.sql:/docker-entrypoint-initdb.d/01-init.sql
+      - ./init.sql:/docker-entrypoint-initdb.d/01-init.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U nimbus -d nimbus_db"]
       interval: 10s

@@ -30,10 +30,29 @@ const envSchema = z.object({
     .default('http://localhost:3000'),
 });
 
-// This runs at module load time — if validation fails, process.exit() equivalent
-// Only validate in non-test environments to allow unit tests without a real DB
-export const env = envSchema.parse(
-  typeof process !== 'undefined' ? process.env : {}
-);
+// PATTERN: Fail Fast with escape hatch for test environments.
+// Set SKIP_ENV_VALIDATION=1 in vitest setup to bypass validation in unit tests.
+// [INTERVIEW ANCHOR] "Fail Fast" means crashing at startup (not at the first API call during
+// a live demo). The safeParse variant lets us emit a human-readable error instead of a raw
+// Zod stack trace while preserving the same startup-crash guarantee.
+const isEdgeRuntime =
+  typeof process !== 'undefined' && process.env['NEXT_RUNTIME'] === 'edge';
+const skipValidation =
+  typeof process !== 'undefined' && process.env['SKIP_ENV_VALIDATION'] === '1';
 
 export type Env = z.infer<typeof envSchema>;
+
+const parsed =
+  skipValidation || isEdgeRuntime
+    ? ({ success: true, data: process.env } as z.SafeParseSuccess<Env>)
+    : envSchema.safeParse(process.env);
+
+if (!parsed.success) {
+  console.error('[nimbus/config] ❌ Invalid environment variables:');
+  console.error(JSON.stringify(parsed.error.flatten().fieldErrors, null, 2));
+  throw new Error(
+    '[nimbus/config] Invalid environment variables — see above for details.'
+  );
+}
+
+export const env = parsed.data as Env;

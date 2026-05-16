@@ -9,6 +9,10 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
+    // Skip type-checking .d.ts files in node_modules — required for drizzle-orm@0.30.x
+    // which has known internal type errors in its sqlite-core/mysql-core declarations.
+    // This does NOT relax checks on our own source files.
+    "skipLibCheck": true,
 
     // Module system — ESNext + Node module resolution for monorepo workspace imports
     "target": "ES2022",

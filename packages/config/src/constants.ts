@@ -35,22 +35,28 @@ export const RERANKED_TOP_K = 5;
 
 /**
  * Dimension of embedding vectors.
- * Must match the pgvector column definition: vector(1536).
- * [INTERVIEW ANCHOR] Changing this requires a full re-embedding of all documents —
- * this is why the dimension is a named constant, not a magic number.
+ * Must match the pgvector column definition AND the embedding model output.
+ * nomic-embed-text (Ollama) → 768  |  text-embedding-3-small (OpenAI) → 1536
+ * [INTERVIEW ANCHOR] Changing this after documents are indexed requires full
+ * re-embedding — this is why the dimension is a named constant, not a magic number.
  */
-export const EMBEDDING_DIM = 1536;
+export const EMBEDDING_DIM = 768;
 
 // Groq model identifiers — named so we update once, not across every file
 export const GROQ_CHAT_MODEL = 'llama-3.3-70b-versatile' as const;
-export const GROQ_EMBEDDING_MODEL = 'text-embedding-ada-002' as const;
+
+// [DECISION] Embedding provider: Ollama local (nomic-embed-text, 768-dim, free, ~30ms).
+// Groq has NO embedding endpoint as of 2025. Do NOT use Groq for embeddings.
+// Override: swap to OpenAI 'text-embedding-3-small' + set EMBEDDING_DIM=1536 if needed.
+export const OLLAMA_EMBEDDING_MODEL = 'nomic-embed-text' as const;
+export const OLLAMA_BASE_URL = 'http://localhost:11434' as const;
 
 // =============================================================
 // Latency budget (milliseconds) — from architecture.md §6
 // These are targets, not guarantees. Flag violations in console.time logs.
 // =============================================================
 export const LATENCY_BUDGET = {
-  EMBEDDING:   50,   // ms — Groq embedding endpoint
+  EMBEDDING:   30,   // ms — Ollama nomic-embed-text on M-series Mac
   RETRIEVAL:   20,   // ms — pgvector HNSW ANN search
   RERANKING:   30,   // ms — cross-encoder or heuristic
   LLM_FIRST_TOKEN: 600, // ms — Groq streamed first token
