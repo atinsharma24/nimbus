@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    // Strict mode — no 'any', no implicit returns, no loose null checks
+    // [INTERVIEW ANCHOR] strictNullChecks catches entire classes of null-dereference bugs at compile time
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+
+    // Module system — ESNext + Node module resolution for monorepo workspace imports
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+
+    // Output — each package compiles to its own 'dist/'
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+
+    // Paths — packages reference each other via workspace aliases
+    "baseUrl": ".",
+    "paths": {
+      "@nimbus/config": ["./packages/config/src/index.ts"],
+      "@nimbus/db": ["./packages/db/src/index.ts"],
+      "@nimbus/rag-core": ["./packages/rag-core/src/index.ts"]
+    }
+  },
+  "exclude": ["node_modules", "**/dist/**", "**/.next/**"]
+}

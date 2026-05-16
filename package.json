@@ -1,0 +1,23 @@
+{
+  "name": "nimbus",
+  "version": "0.0.1",
+  "private": true,
+  "description": "RAG workspace — developer-facing knowledge tool powered by pgvector + Groq",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @nimbus/web dev",
+    "build": "pnpm --filter @nimbus/web build",
+    "typecheck": "pnpm -r exec tsc --noEmit",
+    "test": "pnpm -r exec vitest run",
+    "lint": "pnpm -r exec eslint .",
+    "db:push": "pnpm --filter @nimbus/db db:push",
+    "db:generate": "pnpm --filter @nimbus/db db:generate",
+    "db:studio": "pnpm --filter @nimbus/db db:studio"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}

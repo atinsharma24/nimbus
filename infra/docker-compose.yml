@@ -1,0 +1,54 @@
+version: '3.9'
+
+# Project Nimbus — Local Development Infrastructure
+# Usage:
+#   docker-compose up -d       Start services in background
+#   docker-compose down        Stop services (data persists in volume)
+#   docker-compose down -v     Stop AND delete data volume (destructive!)
+
+services:
+  # =============================================================
+  # PostgreSQL 16 with pgvector extension pre-installed
+  # [INTERVIEW ANCHOR] pgvector extends Postgres with a native 'vector' type
+  # and HNSW/IVFFlat indexes for approximate nearest-neighbor search.
+  # This avoids running a separate vector DB (Pinecone, Weaviate, etc.)
+  # =============================================================
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: nimbus_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: nimbus
+      POSTGRES_PASSWORD: nimbus
+      POSTGRES_DB: nimbus_db
+    ports:
+      - "5432:5432"
+    volumes:
+      # Named volume — data persists across container restarts
+      - nimbus_pg_data:/var/lib/postgresql/data
+      # Init script — runs once on first container start
+      - ./infra/init.sql:/docker-entrypoint-initdb.d/01-init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nimbus -d nimbus_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # =============================================================
+  # Adminer — lightweight DB browser UI (optional, dev only)
+  # Access at http://localhost:8080
+  # System: PostgreSQL, Server: postgres, User: nimbus, Password: nimbus, DB: nimbus_db
+  # =============================================================
+  adminer:
+    image: adminer:4
+    container_name: nimbus_adminer
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  nimbus_pg_data:
+    name: nimbus_pg_data
