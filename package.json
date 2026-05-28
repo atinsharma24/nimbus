@@ -19,5 +19,8 @@
   },
   "devDependencies": {
     "typescript": "^5.4.5"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild", "unrs-resolver", "es5-ext"]
   }
 }

@@ -9,5 +9,4 @@
 
 export * from './types';
 export * from './constants';
-// Note: env is NOT re-exported here — import it directly from '@nimbus/config/env'
-// to avoid triggering Zod validation in contexts that don't have process.env (e.g., edge runtime)
+export * from './env';
