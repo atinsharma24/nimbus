@@ -25,8 +25,8 @@ function createClient() {
     );
   }
 
-  // postgres-js connection pool — max 10 connections (appropriate for a single-server app)
-  const pool = postgres(connectionString, { max: 10 });
+  // prepare: false required for pgvector parameterized queries; max: 10 for the pool
+  const pool = postgres(connectionString, { prepare: false, max: 10 });
 
   return drizzle(pool, { schema });
 }

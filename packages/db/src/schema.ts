@@ -95,13 +95,11 @@ export const chunks = pgTable('chunks', {
   // Position within the parent document — used for context window reconstruction
   chunkIndex: integer('chunk_index').notNull(),
   /**
-   * The embedding vector — stores normalized L2 embedding for cosine similarity.
-   * Dimension must match EMBEDDING_DIM (768) in @nimbus/config/constants.
-   * Model: nomic-embed-text via Ollama (768-dim). If switching to OpenAI
-   * text-embedding-3-small, change both this AND EMBEDDING_DIM to 1536.
-   * [INTERVIEW ANCHOR] Changing this dimension requires re-embedding ALL documents.
+   * 1536-dim vector for OpenAI text-embedding-3-small.
+   * [INTERVIEW ANCHOR] Changing this dimension requires dropping + recreating
+   * the column AND re-embedding every document from scratch.
    */
-  embedding: vector('embedding', 768),
+  embedding: vector('embedding', 1536),
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });
 

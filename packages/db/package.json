@@ -15,11 +15,13 @@
   },
   "dependencies": {
     "@nimbus/config": "workspace:*",
-    "drizzle-orm": "^0.30.10",
+    "dotenv": "^16.4.5",
+    "drizzle-orm": "^0.31.4",
     "postgres": "^3.4.4"
   },
   "devDependencies": {
-    "drizzle-kit": "^0.21.4",
+    "@types/node": "^20.14.0",
+    "drizzle-kit": "^0.22.8",
     "typescript": "^5.4.5"
   }
 }

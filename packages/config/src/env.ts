@@ -15,6 +15,9 @@ const envSchema = z.object({
   // Anthropic is optional — only required when using the fallback provider
   ANTHROPIC_API_KEY: z.string().min(1).optional(),
 
+  // Embeddings — OpenAI text-embedding-3-small
+  OPENAI_API_KEY: z.string().min(1, 'OPENAI_API_KEY is required'),
+
   // Database — must be a valid URL
   // [INTERVIEW ANCHOR] URL validation at startup prevents runtime connection errors
   DATABASE_URL: z.string().url('DATABASE_URL must be a valid PostgreSQL connection URL'),
